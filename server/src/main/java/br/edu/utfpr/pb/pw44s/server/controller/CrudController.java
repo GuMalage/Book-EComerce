@@ -1,6 +1,7 @@
 package br.edu.utfpr.pb.pw44s.server.controller;
 
-import br.edu.utfpr.pb.pw44s.server.service.ICrudService;
+import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceRead;
+import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
 import jakarta.validation.Valid;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
@@ -17,7 +18,9 @@ import java.util.stream.Collectors;
 // T = class type, D = dto type, ID = attribute related to primary key type  
 public abstract class CrudController<T, D, ID extends Serializable> {
 
-    protected abstract ICrudService<T, ID> getService();
+    protected abstract ICrudServiceWrite<T, ID> getWriteService();
+    protected abstract ICrudServiceRead<T, ID> getReadService();
+
     protected abstract ModelMapper getModelMapper();
 
     private final Class<T> typeClass;
@@ -38,7 +41,7 @@ public abstract class CrudController<T, D, ID extends Serializable> {
 
     @GetMapping //http://ip-api:port/request-mapping  
     public ResponseEntity<List<D>> findAll() {
-        return ResponseEntity.ok(getService().findAll().stream().map(this::convertToDto).collect(Collectors.toList()));
+        return ResponseEntity.ok(getReadService().findAll().stream().map(this::convertToDto).collect(Collectors.toList()));
     }
 
     @GetMapping("page") //http://ip-api:port/request-mapping/page?page=1&size=5  
@@ -50,12 +53,12 @@ public abstract class CrudController<T, D, ID extends Serializable> {
         if (order != null && asc != null) {
             pageRequest = PageRequest.of(page, size, asc ? Sort.Direction.ASC : Sort.Direction.DESC, order);
         }
-        return ResponseEntity.ok(getService().findAll(pageRequest).map(this::convertToDto));
+        return ResponseEntity.ok(getReadService().findAll(pageRequest).map(this::convertToDto));
     }
 
     @GetMapping("{id}")
     public ResponseEntity<D> findOne(@PathVariable ID id) {
-        T entity = getService().findById(id);
+        T entity = getReadService().findById(id);
         if (entity != null) {
             return ResponseEntity.ok(convertToDto(entity));
         } else {
@@ -65,28 +68,28 @@ public abstract class CrudController<T, D, ID extends Serializable> {
 
     @PostMapping
     public ResponseEntity<D> create(@RequestBody @Valid D entity) {
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDto(getService().save(convertToEntity(entity))));
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDto(getWriteService().save(convertToEntity(entity))));
 
     }
 
     @PutMapping("{id}")
     public ResponseEntity<D> update(@PathVariable ID id, @RequestBody @Valid D entity) {
-        return ResponseEntity.status(HttpStatus.OK).body(convertToDto(getService().save(convertToEntity(entity))));
+        return ResponseEntity.status(HttpStatus.OK).body(convertToDto(getWriteService().save(convertToEntity(entity))));
     }
 
     @GetMapping("exists/{id}")
     public ResponseEntity<Boolean> exists(@PathVariable ID id) {
-        return ResponseEntity.ok(getService().exists(id));
+        return ResponseEntity.ok(getReadService().exists(id));
     }
 
     @GetMapping("count")
     public ResponseEntity<Long> count() {
-        return ResponseEntity.ok(getService().count());
+        return ResponseEntity.ok(getReadService().count());
     }
 
     @DeleteMapping("{id}")
     public ResponseEntity<Void> delete(@PathVariable ID id) {
-        getService().deleteById(id);
+        getWriteService().deleteById(id);
         return ResponseEntity.noContent().build();
     }
 

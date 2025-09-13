@@ -1764,64 +1764,64 @@ public interface ICategoryService {
 A classe `CategoryServiceImpl` implementará os métodos da interface `ICategoryService`. Além disso será necessário injetar a dependência do objeto `categoryRepository` que é gerenciado pelo *framework* Spring. Outra característica que deve ser observada nessa classe é a anotação `@Service`, a qual tornará o ciclo de vida dessa classe também gerenciável pelo *framework* Spring, para podermos utilizar do conceito de injeção de dependências no *controller*.
 
 ```java  
-package br.edu.utfpr.pb.pw44s.server.service.impl;  
-  
-import br.edu.utfpr.pb.pw44s.server.model.Category;  
-import br.edu.utfpr.pb.pw44s.server.repository.CategoryRepository;  
-import br.edu.utfpr.pb.pw44s.server.service.ICategoryService;  
-import org.springframework.data.domain.Page;  
-import org.springframework.data.domain.Pageable;  
-import org.springframework.stereotype.Service;  
-import org.springframework.transaction.annotation.Transactional;  
-  
-import java.util.List;  
-  
-@Service  
-public class CategoryServiceImpl implements ICategoryService {  
-  
-    private final CategoryRepository categoryRepository;  
-  
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {  
-        this.categoryRepository = categoryRepository;  
-    }  
-  
-    @Override  
-    @Transactional(readOnly = true)  
-    public List<Category> findAll() {  
-        return this.categoryRepository.findAll();  
-    }  
-  
-    @Override  
-    @Transactional(readOnly = true)  
-    public Page<Category> findAll(Pageable pageable) {  
-        return this.categoryRepository.findAll(pageable);  
-    }  
-  
-    @Override  
-    @Transactional(readOnly = true)  
-    public Category findById(Long id) {  
-        return this.categoryRepository.findById(id).orElse(null);  
-    }  
-  
-    @Override  
-    public Category save(Category category) {  
-        return this.categoryRepository.save(category);  
-    }  
-  
-    @Override  
-    public void delete(Long id) {  
-        this.categoryRepository.deleteById(id);  
-    }  
-  
-    @Override  
-    public boolean exists(Long id) {  
-        return this.categoryRepository.existsById(id);  
-    }  
-  
-    @Override  
-    public long count() {  
-        return this.categoryRepository.count();  
-    }  
+package br.edu.utfpr.pb.pw44s.server.service.impl;
+
+import br.edu.utfpr.pb.pw44s.server.model.Category;
+import br.edu.utfpr.pb.pw44s.server.repository.CategoryRepository;
+import br.edu.utfpr.pb.pw44s.server.service.ICategoryServiceWrite;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class CategoryServiceImpl implements ICategoryServiceWrite {
+
+    private final CategoryRepository categoryRepository;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Category> findAll() {
+        return this.categoryRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Category> findAll(Pageable pageable) {
+        return this.categoryRepository.findAll(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Category findById(Long id) {
+        return this.categoryRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Category save(Category category) {
+        return this.categoryRepository.save(category);
+    }
+
+    @Override
+    public void delete(Long id) {
+        this.categoryRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return this.categoryRepository.existsById(id);
+    }
+
+    @Override
+    public long count() {
+        return this.categoryRepository.count();
+    }
 }
 ```  
 
@@ -1832,89 +1832,89 @@ Com a criação da camada *service* está finalizada a camada de acesso e persis
 A classe `CategoryController` terá como atributos o objeto `categoryService` para persistência de dados e o `modelMapper` para conversão entre o *model* e o DTO.
 
 ```java  
-package br.edu.utfpr.pb.pw44s.server.controller;  
-  
-import br.edu.utfpr.pb.pw44s.server.model.Category;  
-import br.edu.utfpr.pb.pw44s.server.service.ICategoryService;  
-import jakarta.validation.Valid;  
-import org.springframework.data.domain.Page;  
-import org.springframework.data.domain.PageRequest;  
-import org.springframework.data.domain.Sort;  
-import org.springframework.http.HttpStatus;  
-import org.springframework.http.ResponseEntity;  
-import org.springframework.web.bind.annotation.*;  
-  
-import java.util.List;  
-  
-@RestController  
-@RequestMapping("categories")  
-public class CategoryController {  
-    private final ICategoryService categoryService;  
-    
-    public CategoryController(ICategoryService categoryService) {  
-        this.categoryService = categoryService;  
-    }  
-  
-    @PostMapping  
-    public ResponseEntity<Category> save(@RequestBody @Valid Category category) {  
-        categoryService.save(category);  
-        return ResponseEntity.status(HttpStatus.CREATED).body(category);  
-    }  
-  
-    @PutMapping  
-    public ResponseEntity<Category> update(@RequestBody @Valid Category category) {  
-        categoryService.save(category);  
-        return ResponseEntity.status(HttpStatus.OK).body(category);  
-    }  
-  
-    @GetMapping  
-    public ResponseEntity<List<Category>> findAll() {  
-        return ResponseEntity  
-                .status(HttpStatus.OK).body(categoryService.findAll());  
-    }  
-  
+package br.edu.utfpr.pb.pw44s.server.controller;
+
+import br.edu.utfpr.pb.pw44s.server.model.Category;
+import br.edu.utfpr.pb.pw44s.server.service.ICategoryServiceWrite;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("categories")
+public class CategoryController {
+    private final ICategoryServiceWrite categoryService;
+
+    public CategoryController(ICategoryServiceWrite categoryService) {
+        this.categoryService = categoryService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Category> save(@RequestBody @Valid Category category) {
+        categoryService.save(category);
+        return ResponseEntity.status(HttpStatus.CREATED).body(category);
+    }
+
+    @PutMapping
+    public ResponseEntity<Category> update(@RequestBody @Valid Category category) {
+        categoryService.save(category);
+        return ResponseEntity.status(HttpStatus.OK).body(category);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Category>> findAll() {
+        return ResponseEntity
+                .status(HttpStatus.OK).body(categoryService.findAll());
+    }
+
     // http://localhost:8080/categories/1  
     // http://localhost:8080/categories?id=1  
-    @GetMapping("{id}")  
-    public ResponseEntity<Category> findById(@PathVariable Long id) {  
-        Category category = categoryService.findById(id);  
-        if (category != null) {  
-            return ResponseEntity.status(HttpStatus.OK).body(category);  
-        } else {  
-            return ResponseEntity.noContent().build();  
-        }  
-    }  
-  
-    @DeleteMapping("{id}")  
-    @ResponseStatus(HttpStatus.NO_CONTENT)  
-    public void delete(@PathVariable Long id) {  
-        categoryService.delete(id);  
-    }  
-  
-    @GetMapping("count")  
-    public ResponseEntity<Long> count() {  
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService.count());  
-    }  
-  
-    @GetMapping("exists/{id}")  
-    public ResponseEntity<Boolean> exists(@PathVariable Long id) {  
-        return ResponseEntity.status(HttpStatus.OK).body(categoryService.exists(id));  
-    }  
-    
+    @GetMapping("{id}")
+    public ResponseEntity<Category> findById(@PathVariable Long id) {
+        Category category = categoryService.findById(id);
+        if (category != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(category);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        categoryService.delete(id);
+    }
+
+    @GetMapping("count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.count());
+    }
+
+    @GetMapping("exists/{id}")
+    public ResponseEntity<Boolean> exists(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(categoryService.exists(id));
+    }
+
     //http://localhost:8080/categories/page?page=1&size=5  
-    @GetMapping("page")  
-    public ResponseEntity<Page<Category>> findPage(@RequestParam int page,  
-                                                   @RequestParam int size,  
-                                       @RequestParam(required = false) String order,  
-                                       @RequestParam(required = false) Boolean asc) {  
-        PageRequest pageRequest = PageRequest.of(page, size);  
-        if (order != null && asc != null) {  
-            pageRequest = PageRequest.of(page, size,  
-                    asc ? Sort.Direction.ASC : Sort.Direction.DESC, order);  
-        }  
-        return ResponseEntity.status(HttpStatus.OK).body(  
-                            categoryService.findAll(pageRequest));  
-    }   
+    @GetMapping("page")
+    public ResponseEntity<Page<Category>> findPage(@RequestParam int page,
+                                                   @RequestParam int size,
+                                                   @RequestParam(required = false) String order,
+                                                   @RequestParam(required = false) Boolean asc) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        if (order != null && asc != null) {
+            pageRequest = PageRequest.of(page, size,
+                    asc ? Sort.Direction.ASC : Sort.Direction.DESC, order);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                categoryService.findAll(pageRequest));
+    }
 }
 ```  
 
@@ -2052,151 +2052,153 @@ public interface IProductService {
 } 
 ```  
 #### 7.5 Classe ProductServiceImpl
+
 ```java  
-package br.edu.utfpr.pb.pw44s.server.service.impl;  
-  
-import br.edu.utfpr.pb.pw44s.server.model.Product;  
-import br.edu.utfpr.pb.pw44s.server.repository.ProductRepository;  
-import br.edu.utfpr.pb.pw44s.server.service.IProductService;  
-import org.springframework.data.domain.Page;  
-import org.springframework.data.domain.Pageable;  
-import org.springframework.stereotype.Service;  
-import org.springframework.transaction.annotation.Transactional;  
-  
-import java.util.List;  
-  
-@Service  
-public class ProductServiceImpl implements IProductService {  
-    private final ProductRepository productRepository;  
-  
-    public ProductServiceImpl(ProductRepository productRepository) {  
-        this.productRepository = productRepository;  
-    }  
-  
-    @Override  
-    @Transactional(readOnly = true)  
-    public List<Product> findAll() {  
-        return this.productRepository.findAll();  
-    }  
-  
-    @Override  
-    @Transactional(readOnly = true)  
-    public Page<Product> findAll(Pageable pageable) {  
-        return this.productRepository.findAll(pageable);  
-    }  
-  
-    @Override  
-    @Transactional(readOnly = true)  
-    public Product findById(Long id) {  
-        return this.productRepository.findById(id).orElse(null);  
-    }  
-  
-    @Override  
-    public Product save(Product product) {  
-        return this.productRepository.save(product);  
-    }  
-  
-    @Override  
-    public void delete(Long id) {  
-        this.productRepository.deleteById(id);  
-    }  
-  
-    @Override  
-    public boolean exists(Long id) {  
-        return this.productRepository.existsById(id);  
-    }  
-  
-    @Override  
-    public long count() {  
-        return this.productRepository.count();  
-    }  
+package br.edu.utfpr.pb.pw44s.server.service.impl;
+
+import br.edu.utfpr.pb.pw44s.server.model.Product;
+import br.edu.utfpr.pb.pw44s.server.repository.ProductRepository;
+import br.edu.utfpr.pb.pw44s.server.service.IProductServiceWrite;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+@Service
+public class ProductServiceImpl implements IProductServiceWrite {
+    private final ProductRepository productRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Product> findAll() {
+        return this.productRepository.findAll();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Page<Product> findAll(Pageable pageable) {
+        return this.productRepository.findAll(pageable);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Product findById(Long id) {
+        return this.productRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Product save(Product product) {
+        return this.productRepository.save(product);
+    }
+
+    @Override
+    public void delete(Long id) {
+        this.productRepository.deleteById(id);
+    }
+
+    @Override
+    public boolean exists(Long id) {
+        return this.productRepository.existsById(id);
+    }
+
+    @Override
+    public long count() {
+        return this.productRepository.count();
+    }
 }
 ```  
 #### 7.6 Classe ProductController
+
 ```java  
-package br.edu.utfpr.pb.pw44s.server.controller;  
-  
-import br.edu.utfpr.pb.pw44s.server.model.Product;  
-import br.edu.utfpr.pb.pw44s.server.service.IProductService;  
-import jakarta.validation.Valid;  
-import org.springframework.data.domain.Page;  
-import org.springframework.data.domain.PageRequest;  
-import org.springframework.data.domain.Sort;  
-import org.springframework.http.HttpStatus;  
-import org.springframework.http.ResponseEntity;  
-import org.springframework.web.bind.annotation.*;  
-  
-import java.util.List;  
-  
-@RestController  
-@RequestMapping("products")  
-public class ProductController {  
-    private final IProductService productService;  
-  
-    public ProductController(IProductService productService) {  
-        this.productService = productService;  
-    }  
-  
-    @PostMapping  
-    public ResponseEntity<Product> save(@RequestBody @Valid Product product) {  
-        productService.save(product);  
-        return ResponseEntity.status(HttpStatus.CREATED).body(product);  
-    }  
-  
-    @PutMapping  
-    public ResponseEntity<Product> update(@RequestBody @Valid Product product) {  
-        productService.save(product);  
-        return ResponseEntity.status(HttpStatus.OK).body(product);  
-    }  
-  
-    @GetMapping  
-    public ResponseEntity<List<Product>> findAll() {  
-        return ResponseEntity  
-                .status(HttpStatus.OK).body(productService.findAll());  
-    }  
-  
+package br.edu.utfpr.pb.pw44s.server.controller;
+
+import br.edu.utfpr.pb.pw44s.server.model.Product;
+import br.edu.utfpr.pb.pw44s.server.service.IProductServiceWrite;
+import jakarta.validation.Valid;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping("products")
+public class ProductController {
+    private final IProductServiceWrite productService;
+
+    public ProductController(IProductServiceWrite productService) {
+        this.productService = productService;
+    }
+
+    @PostMapping
+    public ResponseEntity<Product> save(@RequestBody @Valid Product product) {
+        productService.save(product);
+        return ResponseEntity.status(HttpStatus.CREATED).body(product);
+    }
+
+    @PutMapping
+    public ResponseEntity<Product> update(@RequestBody @Valid Product product) {
+        productService.save(product);
+        return ResponseEntity.status(HttpStatus.OK).body(product);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Product>> findAll() {
+        return ResponseEntity
+                .status(HttpStatus.OK).body(productService.findAll());
+    }
+
     // http://localhost:8080/products/1  
     // http://localhost:8080/products?id=1
-    @GetMapping("{id}")  
-    public ResponseEntity<Product> findById(@PathVariable Long id) {  
-        Product product = productService.findById(id);  
-        if (product != null) {  
-            return ResponseEntity.status(HttpStatus.OK).body(product);  
-        } else {  
-            return ResponseEntity.noContent().build();  
-        }  
-    }  
-  
-    @DeleteMapping("{id}")  
-    @ResponseStatus(HttpStatus.NO_CONTENT)  
-    public void delete(@PathVariable Long id) {  
-        productService.delete(id);  
-    }  
-  
-    @GetMapping("count")  
-    public ResponseEntity<Long> count() {  
-        return ResponseEntity.status(HttpStatus.OK).body(productService.count());  
-    }  
-  
-    @GetMapping("exists/{id}")  
-    public ResponseEntity<Boolean> exists(@PathVariable Long id) {  
-        return ResponseEntity.status(HttpStatus.OK).body(productService.exists(id));  
-    }  
-    
+    @GetMapping("{id}")
+    public ResponseEntity<Product> findById(@PathVariable Long id) {
+        Product product = productService.findById(id);
+        if (product != null) {
+            return ResponseEntity.status(HttpStatus.OK).body(product);
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @DeleteMapping("{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable Long id) {
+        productService.delete(id);
+    }
+
+    @GetMapping("count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.count());
+    }
+
+    @GetMapping("exists/{id}")
+    public ResponseEntity<Boolean> exists(@PathVariable Long id) {
+        return ResponseEntity.status(HttpStatus.OK).body(productService.exists(id));
+    }
+
     //http://localhost:8080/products/page?page=1&size=5  
-    @GetMapping("page")  
-    public ResponseEntity<Page<Product>> findPage(@RequestParam int page,  
-                                                   @RequestParam int size,  
-                                       @RequestParam(required = false) String order,  
-                                       @RequestParam(required = false) Boolean asc) {  
-        PageRequest pageRequest = PageRequest.of(page, size);  
-        if (order != null && asc != null) {  
-            pageRequest = PageRequest.of(page, size,  
-                    asc ? Sort.Direction.ASC : Sort.Direction.DESC, order);  
-        }  
-        return ResponseEntity.status(HttpStatus.OK).body(  
-                            productService.findAll(pageRequest));  
-    }  
+    @GetMapping("page")
+    public ResponseEntity<Page<Product>> findPage(@RequestParam int page,
+                                                  @RequestParam int size,
+                                                  @RequestParam(required = false) String order,
+                                                  @RequestParam(required = false) Boolean asc) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        if (order != null && asc != null) {
+            pageRequest = PageRequest.of(page, size,
+                    asc ? Sort.Direction.ASC : Sort.Direction.DESC, order);
+        }
+        return ResponseEntity.status(HttpStatus.OK).body(
+                productService.findAll(pageRequest));
+    }
 }
 ```  
 
@@ -2281,87 +2283,87 @@ public interface ICrudService<T, ID extends Serializable> {
 A classe `CrudServiceImpl` será criada no pacote `br.edu.utfpr.pb.pw44s.server.service.impl`. Essa classe é abstrata e irá implementar todos os métodos existentes na classe `ICrudService` e contém também a assinatura de um método abstrato o `getRepository()`, que irá retornar o repositório de dados que irá ser utilizado para realizar as operações de CRUD.
 
 ```java  
-package br.edu.utfpr.pb.pw44s.server.service.impl;  
-  
-import br.edu.utfpr.pb.pw44s.server.service.ICrudService;  
-import org.springframework.data.domain.Page;  
-import org.springframework.data.domain.Pageable;  
-import org.springframework.data.domain.Sort;  
-import org.springframework.data.jpa.repository.JpaRepository;  
-import org.springframework.transaction.annotation.Transactional;  
-  
-import java.io.Serializable;  
-import java.util.List;  
-  
-public abstract class CrudServiceImpl<T, ID extends Serializable> implements ICrudService<T, ID> {  
-  
-    protected abstract JpaRepository<T, ID> getRepository();  
-  
-    @Override  
-    public List<T> findAll() {  
-        return getRepository().findAll();  
-    }  
-  
-    @Override  
-    public List<T> findAll(Sort sort) {  
-        return getRepository().findAll(sort);  
-    }  
-  
-    @Override  
-    public Page<T> findAll(Pageable pageable) {  
-        return getRepository().findAll(pageable);  
-    }  
-  
-    @Override  
-    public T save(T entity) {  
-        return getRepository().save(entity);  
-    }  
-  
-    @Override  
-    public T saveAndFlush(T entity) {  
-        return getRepository().saveAndFlush(entity);  
-    }  
-  
-    @Override  
-    public Iterable<T> save(Iterable<T> iterable) {  
-        return getRepository().saveAll(iterable);  
-    }  
-  
-    @Override  
-    public void flush() {  
-        getRepository().flush();  
-    }  
-  
-    @Override  
-    public T findById(ID id) {  
-        return getRepository().findById(id).orElse(null);  
-    }  
-  
-    @Override  
-    public boolean exists(ID id) {  
-        return getRepository().existsById(id);  
-    }  
-  
-    @Override  
-    @Transactional(readOnly = true)  
-    public long count() {  
-        return getRepository().count();  
-    }  
-  
-    @Override  
-    public void deleteById(ID id) {  
-        getRepository().deleteById(id);  
-    }  
-  
-    @Override  
-    public void delete(Iterable<? extends T> iterable) {  
-        getRepository().deleteAll(iterable);  
-    }  
-  
-    @Override  
-    public void deleteAll() {  
-        getRepository().deleteAll();  
-    }  
+package br.edu.utfpr.pb.pw44s.server.service.impl;
+
+import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
+import java.util.List;
+
+public abstract class CrudServiceImpl<T, ID extends Serializable> implements ICrudServiceWrite<T, ID> {
+
+    protected abstract JpaRepository<T, ID> getRepository();
+
+    @Override
+    public List<T> findAll() {
+        return getRepository().findAll();
+    }
+
+    @Override
+    public List<T> findAll(Sort sort) {
+        return getRepository().findAll(sort);
+    }
+
+    @Override
+    public Page<T> findAll(Pageable pageable) {
+        return getRepository().findAll(pageable);
+    }
+
+    @Override
+    public T save(T entity) {
+        return getRepository().save(entity);
+    }
+
+    @Override
+    public T saveAndFlush(T entity) {
+        return getRepository().saveAndFlush(entity);
+    }
+
+    @Override
+    public Iterable<T> save(Iterable<T> iterable) {
+        return getRepository().saveAll(iterable);
+    }
+
+    @Override
+    public void flush() {
+        getRepository().flush();
+    }
+
+    @Override
+    public T findById(ID id) {
+        return getRepository().findById(id).orElse(null);
+    }
+
+    @Override
+    public boolean exists(ID id) {
+        return getRepository().existsById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long count() {
+        return getRepository().count();
+    }
+
+    @Override
+    public void deleteById(ID id) {
+        getRepository().deleteById(id);
+    }
+
+    @Override
+    public void delete(Iterable<? extends T> iterable) {
+        getRepository().deleteAll(iterable);
+    }
+
+    @Override
+    public void deleteAll() {
+        getRepository().deleteAll();
+    }
 } 
 ```  
 Após a criação da interface `ICrudService` e da classe abstrata `CrudServiceImpl` a camada de persistência de dados está finalizada. O próximo passo é desenvolver a classe abstrata da camada ***controller*** da aplicação.
@@ -2374,101 +2376,100 @@ Os métodos com as anotações `@GetMapping` executam as requisições do tipo *
 
 Já o método `create(@RequestBody @Valid D entity)` será utilizado para criar um novo registro, irá receber como parâmetro um JSON no formato da classe DTO, será validado de acordo com as anotações no DTO e então persistido utilizando o *service*.
 
-
 ```java  
-package br.edu.utfpr.pb.pw44s.server.controller;  
-  
-import br.edu.utfpr.pb.pw44s.server.service.ICrudService;  
-import jakarta.validation.Valid;  
-import org.modelmapper.ModelMapper;  
-import org.springframework.data.domain.Page;  
-import org.springframework.data.domain.PageRequest;  
-import org.springframework.data.domain.Sort;  
-import org.springframework.http.HttpStatus;  
-import org.springframework.http.ResponseEntity;  
-import org.springframework.web.bind.annotation.*;  
-  
-import java.io.Serializable;  
-import java.util.List;  
-import java.util.stream.Collectors;  
-  
+package br.edu.utfpr.pb.pw44s.server.controller;
+
+import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.io.Serializable;
+import java.util.List;
+import java.util.stream.Collectors;
+
 // T = class type, D = dto type, ID = attribute related to primary key type  
-public abstract class CrudController<T, D, ID extends Serializable> {  
-  
-    protected abstract ICrudService<T, ID> getService();  
-  
-    protected abstract ModelMapper getModelMapper();  
-  
-    private final Class<T> typeClass;  
-    private final Class<D> typeDtoClass;  
-  
-    public CrudController(Class<T> typeClass, Class<D> typeDtoClass) {  
-        this.typeClass = typeClass;  
-        this.typeDtoClass = typeDtoClass;  
-    }  
-  
-    private D convertToDto(T entity) {  
-        return getModelMapper().map(entity, this.typeDtoClass);  
-    }  
-  
-    private T convertToEntity(D entityDto) {  
-        return getModelMapper().map(entityDto, this.typeClass);  
-    }  
-  
+public abstract class CrudController<T, D, ID extends Serializable> {
+
+    protected abstract ICrudServiceWrite<T, ID> getService();
+
+    protected abstract ModelMapper getModelMapper();
+
+    private final Class<T> typeClass;
+    private final Class<D> typeDtoClass;
+
+    public CrudController(Class<T> typeClass, Class<D> typeDtoClass) {
+        this.typeClass = typeClass;
+        this.typeDtoClass = typeDtoClass;
+    }
+
+    private D convertToDto(T entity) {
+        return getModelMapper().map(entity, this.typeDtoClass);
+    }
+
+    private T convertToEntity(D entityDto) {
+        return getModelMapper().map(entityDto, this.typeClass);
+    }
+
     @GetMapping //http://ip-api:port/request-mapping  
-    public ResponseEntity<List<D>> findAll() {  
-        return ResponseEntity.ok(getService().findAll().stream().map(this::convertToDto).collect(Collectors.toList()));  
-    }  
-  
+    public ResponseEntity<List<D>> findAll() {
+        return ResponseEntity.ok(getService().findAll().stream().map(this::convertToDto).collect(Collectors.toList()));
+    }
+
     @GetMapping("page") //http://ip-api:port/request-mapping/page?page=1&size=5  
-    public ResponseEntity<Page<D>> findAll(@RequestParam int page,   
-                                           @RequestParam int size,   
-                                           @RequestParam(required = false) String order,   
-                                           @RequestParam(required = false) Boolean asc) {  
-        PageRequest pageRequest = PageRequest.of(page, size);  
-        if (order != null && asc != null) {  
-            pageRequest = PageRequest.of(page, size, asc ? Sort.Direction.ASC : Sort.Direction.DESC, order);  
-        }  
-        return ResponseEntity.ok(getService().findAll(pageRequest).map(this::convertToDto));  
-    }  
-  
-    @GetMapping("{id}")  
-    public ResponseEntity<D> findOne(@PathVariable ID id) {  
-        T entity = getService().findById(id);  
-        if (entity != null) {  
-            return ResponseEntity.ok(convertToDto(entity));  
-        } else {  
-            return ResponseEntity.noContent().build();  
-        }  
-    }  
-  
-    @PostMapping  
-    public ResponseEntity<D> create(@RequestBody @Valid D entity) {  
-        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDto(getService().save(convertToEntity(entity))));  
-  
-    }  
-  
-    @PutMapping("{id}")  
-    public ResponseEntity<D> update(@PathVariable ID id, @RequestBody @Valid D entity) {  
-        return ResponseEntity.status(HttpStatus.OK).body(convertToDto(getService().save(convertToEntity(entity))));  
-    }  
-  
-    @GetMapping("exists/{id}")  
-    public ResponseEntity<Boolean> exists(@PathVariable ID id) {  
-        return ResponseEntity.ok(getService().exists(id));  
-    }  
-  
-    @GetMapping("count")  
-    public ResponseEntity<Long> count() {  
-        return ResponseEntity.ok(getService().count());  
-    }  
-  
-    @DeleteMapping("{id}")  
-    public ResponseEntity<Void> delete(@PathVariable ID id) {  
-        getService().deleteById(id);  
-        return ResponseEntity.noContent().build();  
-    }  
-  
+    public ResponseEntity<Page<D>> findAll(@RequestParam int page,
+                                           @RequestParam int size,
+                                           @RequestParam(required = false) String order,
+                                           @RequestParam(required = false) Boolean asc) {
+        PageRequest pageRequest = PageRequest.of(page, size);
+        if (order != null && asc != null) {
+            pageRequest = PageRequest.of(page, size, asc ? Sort.Direction.ASC : Sort.Direction.DESC, order);
+        }
+        return ResponseEntity.ok(getService().findAll(pageRequest).map(this::convertToDto));
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<D> findOne(@PathVariable ID id) {
+        T entity = getService().findById(id);
+        if (entity != null) {
+            return ResponseEntity.ok(convertToDto(entity));
+        } else {
+            return ResponseEntity.noContent().build();
+        }
+    }
+
+    @PostMapping
+    public ResponseEntity<D> create(@RequestBody @Valid D entity) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(convertToDto(getService().save(convertToEntity(entity))));
+
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<D> update(@PathVariable ID id, @RequestBody @Valid D entity) {
+        return ResponseEntity.status(HttpStatus.OK).body(convertToDto(getService().save(convertToEntity(entity))));
+    }
+
+    @GetMapping("exists/{id}")
+    public ResponseEntity<Boolean> exists(@PathVariable ID id) {
+        return ResponseEntity.ok(getService().exists(id));
+    }
+
+    @GetMapping("count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(getService().count());
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<Void> delete(@PathVariable ID id) {
+        getService().deleteById(id);
+        return ResponseEntity.noContent().build();
+    }
+
 } 
 ```
 ---
@@ -2478,72 +2479,75 @@ public abstract class CrudController<T, D, ID extends Serializable> {
 Os ajustes serão realizados na interface `ICategoryService` e nas classes `CategoryServiceImpl` e  `CategoryController`.
 
 ##### 9.1.1 ICategoryService
+
 ```java
-package br.edu.utfpr.pb.pw44s.server.service;  
+package br.edu.utfpr.pb.pw44s.server.service;
 
-import br.edu.utfpr.pb.pw44s.server.model.Category;  
+import br.edu.utfpr.pb.pw44s.server.model.Category;
 
-public interface ICategoryService extends ICrudService<Category, Long> {  
+public interface ICategoryService extends ICrudServiceWrite<Category, Long> {
 }
 ```
 ##### 9.1.2 CategoryServiceImpl
+
 ```java
-package br.edu.utfpr.pb.pw44s.server.service.impl;  
-  
-import br.edu.utfpr.pb.pw44s.server.model.Category;  
-import br.edu.utfpr.pb.pw44s.server.repository.CategoryRepository;  
-import br.edu.utfpr.pb.pw44s.server.service.ICategoryService;  
-import org.springframework.data.jpa.repository.JpaRepository;  
-import org.springframework.stereotype.Service;  
-  
-@Service  
-public class CategoryServiceImpl extends CrudServiceImpl<Category, Long> implements ICategoryService {  
-  
-    private final CategoryRepository categoryRepository;  
-  
-    public CategoryServiceImpl(CategoryRepository categoryRepository) {  
-        this.categoryRepository = categoryRepository;  
-    }  
-  
-    @Override  
-    protected JpaRepository<Category, Long> getRepository() {  
-        return categoryRepository;  
-    }  
+package br.edu.utfpr.pb.pw44s.server.service.impl;
+
+import br.edu.utfpr.pb.pw44s.server.model.Category;
+import br.edu.utfpr.pb.pw44s.server.repository.CategoryRepository;
+import br.edu.utfpr.pb.pw44s.server.service.ICategoryServiceWrite;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class CategoryServiceImpl extends CrudServiceWriteImpl<Category, Long> implements ICategoryServiceWrite {
+
+    private final CategoryRepository categoryRepository;
+
+    public CategoryServiceImpl(CategoryRepository categoryRepository) {
+        this.categoryRepository = categoryRepository;
+    }
+
+    @Override
+    protected JpaRepository<Category, Long> getRepository() {
+        return categoryRepository;
+    }
 }
 ```
 ##### 9.1.3 CategoryController
+
 ```java
-package br.edu.utfpr.pb.pw44s.server.controller;  
-  
-import br.edu.utfpr.pb.pw44s.server.dto.CategoryDTO;  
-import br.edu.utfpr.pb.pw44s.server.model.Category;  
-import br.edu.utfpr.pb.pw44s.server.service.ICategoryService;  
-import br.edu.utfpr.pb.pw44s.server.service.ICrudService;  
-import org.modelmapper.ModelMapper;  
-import org.springframework.web.bind.annotation.RequestMapping;  
-import org.springframework.web.bind.annotation.RestController;  
-  
-@RestController  
-@RequestMapping("categories")  
-public class CategoryController extends CrudController<Category, CategoryDTO, Long> {  
-    private final ICategoryService categoryService;  
-    private final ModelMapper modelMapper;  
-  
-    public CategoryController(ICategoryService categoryService, ModelMapper modelMapper) {  
-        super(Category.class, CategoryDTO.class);  
-        this.categoryService = categoryService;  
-        this.modelMapper = modelMapper;  
-    }  
-  
-    @Override  
-    protected ICrudService<Category, Long> getService() {  
-        return CategoryController.categoryService;  
-    }  
-  
-    @Override  
-    protected ModelMapper getModelMapper() {  
-        return CategoryController.modelMapper;  
-    }  
+package br.edu.utfpr.pb.pw44s.server.controller;
+
+import br.edu.utfpr.pb.pw44s.server.dto.CategoryDTO;
+import br.edu.utfpr.pb.pw44s.server.model.Category;
+import br.edu.utfpr.pb.pw44s.server.service.ICategoryServiceWrite;
+import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
+import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("categories")
+public class CategoryController extends CrudController<Category, CategoryDTO, Long> {
+    private final ICategoryServiceWrite categoryService;
+    private final ModelMapper modelMapper;
+
+    public CategoryController(ICategoryServiceWrite categoryService, ModelMapper modelMapper) {
+        super(Category.class, CategoryDTO.class);
+        this.categoryService = categoryService;
+        this.modelMapper = modelMapper;
+    }
+
+    @Override
+    protected ICrudServiceWrite<Category, Long> getService() {
+        return CategoryController.categoryService;
+    }
+
+    @Override
+    protected ModelMapper getModelMapper() {
+        return CategoryController.modelMapper;
+    }
 }
 ```
 
@@ -2551,73 +2555,76 @@ public class CategoryController extends CrudController<Category, CategoryDTO, Lo
 Os ajustes serão realizados na interface `IProductService` e nas classes `ProductServiceImpl` e `ProductController`.
 
 ##### 9.2.1 IProductService
+
 ```java
-package br.edu.utfpr.pb.pw44s.server.service;  
-  
-import br.edu.utfpr.pb.pw44s.server.model.Product;  
-  
-public interface IProductService extends ICrudService<Product, Long> {  
+package br.edu.utfpr.pb.pw44s.server.service;
+
+import br.edu.utfpr.pb.pw44s.server.model.Product;
+
+public interface IProductService extends ICrudServiceWrite<Product, Long> {
 }
 ```
 ##### 9.2.2 ProductServiceImpl
+
 ```java
-package br.edu.utfpr.pb.pw44s.server.service.impl;  
-  
-import br.edu.utfpr.pb.pw44s.server.model.Product;  
-import br.edu.utfpr.pb.pw44s.server.repository.ProductRepository;  
-import br.edu.utfpr.pb.pw44s.server.service.IProductService;  
-import org.springframework.data.jpa.repository.JpaRepository;  
-import org.springframework.stereotype.Service;  
-  
-@Service  
-public class ProductServiceImpl extends CrudServiceImpl<Product, Long>  
-        implements IProductService {  
-  
-    private final ProductRepository productRepository;  
-  
-    public ProductServiceImpl(ProductRepository productRepository) {  
-        this.productRepository = productRepository;  
-    }  
-  
-    @Override  
-    protected JpaRepository<Product, Long> getRepository() {  
-        return productRepository;  
-    }  
+package br.edu.utfpr.pb.pw44s.server.service.impl;
+
+import br.edu.utfpr.pb.pw44s.server.model.Product;
+import br.edu.utfpr.pb.pw44s.server.repository.ProductRepository;
+import br.edu.utfpr.pb.pw44s.server.service.IProductServiceWrite;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Service;
+
+@Service
+public class ProductServiceImpl extends CrudServiceWriteImpl<Product, Long>
+        implements IProductServiceWrite {
+
+    private final ProductRepository productRepository;
+
+    public ProductServiceImpl(ProductRepository productRepository) {
+        this.productRepository = productRepository;
+    }
+
+    @Override
+    protected JpaRepository<Product, Long> getRepository() {
+        return productRepository;
+    }
 }
 ```
 ##### 9.2.3 ProductController
+
 ```java
-package br.edu.utfpr.pb.pw44s.server.controller;  
-  
-import br.edu.utfpr.pb.pw44s.server.dto.ProductDTO;  
-import br.edu.utfpr.pb.pw44s.server.model.Product;  
-import br.edu.utfpr.pb.pw44s.server.service.ICrudService;  
-import br.edu.utfpr.pb.pw44s.server.service.IProductService;  
-import org.modelmapper.ModelMapper;  
-import org.springframework.web.bind.annotation.RequestMapping;  
-import org.springframework.web.bind.annotation.RestController;  
-  
-@RestController  
-@RequestMapping("products")  
-public class ProductController extends CrudController<Product, ProductDTO, Long> {  
-    private final IProductService productService;  
-    private final ModelMapper modelMapper;  
-  
-    public ProductController(IProductService productService, ModelMapper modelMapper) {  
-        super(Product.class, ProductDTO.class);  
-        this.productService = productService;  
-        this.modelMapper = modelMapper;  
-    }  
-  
-    @Override  
-    protected ICrudService<Product, Long> getService() {  
-        return productService;  
-    }  
-  
-    @Override  
-    protected ModelMapper getModelMapper() {  
-        return modelMapper;  
-    }  
+package br.edu.utfpr.pb.pw44s.server.controller;
+
+import br.edu.utfpr.pb.pw44s.server.dto.ProductDTO;
+import br.edu.utfpr.pb.pw44s.server.model.Product;
+import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
+import br.edu.utfpr.pb.pw44s.server.service.IProductServiceWrite;
+import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+@RequestMapping("products")
+public class ProductController extends CrudController<Product, ProductDTO, Long> {
+    private final IProductServiceWrite productService;
+    private final ModelMapper modelMapper;
+
+    public ProductController(IProductServiceWrite productService, ModelMapper modelMapper) {
+        super(Product.class, ProductDTO.class);
+        this.productService = productService;
+        this.modelMapper = modelMapper;
+    }
+
+    @Override
+    protected ICrudServiceWrite<Product, Long> getService() {
+        return productService;
+    }
+
+    @Override
+    protected ModelMapper getModelMapper() {
+        return modelMapper;
+    }
 }
 ```
 ---

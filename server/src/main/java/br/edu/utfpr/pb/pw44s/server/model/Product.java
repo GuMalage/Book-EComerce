@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Product {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -23,6 +24,10 @@ public class Product {
     private String description;
 
     private BigDecimal price;
+
+    private String urlImage;
+
     @ManyToOne
     private Category category;
+
 }

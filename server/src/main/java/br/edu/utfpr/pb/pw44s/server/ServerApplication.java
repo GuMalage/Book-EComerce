@@ -7,8 +7,6 @@ import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfi
 @SpringBootApplication
 public class ServerApplication {
 
-    //https://github.com/viniciuspegorini/pw44s-2025-2
-
 	public static void main(String[] args) {
 		SpringApplication.run(ServerApplication.class, args);
 	}

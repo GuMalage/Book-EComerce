@@ -3,17 +3,27 @@ package br.edu.utfpr.pb.pw44s.server.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
-@Table(name = "tb_category")
-@Getter @Setter
+@Table(name = "tb_order")
+@Getter
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Category {
+public class Address {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
-    private String name;
+
+    @ManyToOne
+    private User user;
+
+    private String logradouro;
+
+    private String complement;
+
+    private String cep;
 }

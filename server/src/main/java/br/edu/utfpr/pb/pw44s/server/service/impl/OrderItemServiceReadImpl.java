@@ -16,4 +16,5 @@ public class OrderItemServiceReadImpl extends CrudServiceReadImpl<OrderItem, Lon
 
     @Override
     protected JpaRepository<OrderItem, Long> getRepository() {return orderItemRepository;}
+
 }

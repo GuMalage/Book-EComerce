@@ -7,8 +7,12 @@ import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
 import br.edu.utfpr.pb.pw44s.server.service.IOrderServiceRead;
 import br.edu.utfpr.pb.pw44s.server.service.IOrderServiceWrite;
 import org.modelmapper.ModelMapper;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("order")
@@ -26,16 +30,30 @@ public class OrderController extends CrudController<Order, OrderDTO, Long>{
 
     @Override
     protected ICrudServiceWrite<Order, Long> getWriteService() {
-        return null;
+        return this.orderServiceWrite;
     }
 
     @Override
     protected ICrudServiceRead<Order, Long> getReadService() {
-        return null;
+        return this.orderServiceRead;
     }
 
     @Override
     protected ModelMapper getModelMapper() {
-        return null;
+        return this.modelMapper;
     }
+
+    @Override
+    public ResponseEntity<List<OrderDTO>> findAll() {
+        return orderServiceRead.getOrdersByAuthenticatedUser();
+    }
+
+    @Override
+    public ResponseEntity<OrderDTO> create(OrderDTO entity) {
+        OrderDTO savedOrderDTO = orderServiceWrite.SaveCompleteOrder(entity);
+        OrderDTO responseOrderDTO = modelMapper.map(savedOrderDTO, OrderDTO.class);
+
+        return ResponseEntity.ok(responseOrderDTO);
+    }
+
 }

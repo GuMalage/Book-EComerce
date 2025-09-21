@@ -8,8 +8,12 @@ import br.edu.utfpr.pb.pw44s.server.service.IProductServiceRead;
 import br.edu.utfpr.pb.pw44s.server.service.IProductServiceWrite;
 import br.edu.utfpr.pb.pw44s.server.service.impl.ProductServiceWriteImpl;
 import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("products")
@@ -17,14 +21,12 @@ public class ProductController extends CrudController<Product, ProductDTO, Long>
     private final IProductServiceWrite productServiceWrite;
     private final IProductServiceRead productServiceRead;
     private final ModelMapper modelMapper;
-    private final ProductServiceWriteImpl productServiceWriteImpl;
 
     public ProductController(IProductServiceWrite productServiceWrite, IProductServiceRead productServiceRead, ModelMapper modelMapper, ProductServiceWriteImpl productServiceWriteImpl) {
         super(Product.class, ProductDTO.class);
         this.productServiceWrite = productServiceWrite;
         this.productServiceRead = productServiceRead;
         this.modelMapper = modelMapper;
-        this.productServiceWriteImpl = productServiceWriteImpl;
     }
 
     @Override
@@ -40,5 +42,10 @@ public class ProductController extends CrudController<Product, ProductDTO, Long>
     @Override
     protected ModelMapper getModelMapper() {
         return modelMapper;
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public List<Product> getProductsByCategory(@PathVariable Long categoryId) {
+        return productServiceRead.findAllByCategoryId(categoryId);
     }
 }

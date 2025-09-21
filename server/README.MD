@@ -965,39 +965,39 @@ public class WebConfig {
 }  
 ```  
 Agora será ajustada a classe `UserController`, que após o uso do objeto `modelMapper` irá ficar com o seguinte conteúdo:
+
 ```java  
-package br.edu.utfpr.pb.pw44s.server.controller;  
-  
-import br.edu.utfpr.pb.pw44s.server.dto.UserDTO;  
-import br.edu.utfpr.pb.pw44s.server.model.User;  
-import br.edu.utfpr.pb.pw44s.server.service.UserService;  
-import br.edu.utfpr.pb.pw44s.server.shared.GenericResponse;  
-import jakarta.validation.Valid;  
-import org.modelmapper.ModelMapper;  
-import org.springframework.http.HttpStatus;  
-import org.springframework.http.ResponseEntity;  
-import org.springframework.web.bind.annotation.*;  
-  
-@RestController  
-@RequestMapping("users")  
-public class UserController {  
-  
-    private final UserService userService;  
-    private final ModelMapper modelMapper;  
-  
-    public UserController(UserService userService, ModelMapper modelMapper) {  
-        this.userService = userService;  
-        this.modelMapper = modelMapper;  
-    }  
-  
-    @PostMapping  
-    @ResponseStatus(HttpStatus.CREATED)  
-    public ResponseEntity<GenericResponse> createUser(@RequestBody @Valid UserDTO userDTO) {  
-        this.userService.save(modelMapper.map(userDTO, User.class));  
-  
-        return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse("Usuário salvo com sucesso"));  
-    }  
-  
+package br.edu.utfpr.pb.pw44s.server.controller;
+
+import br.edu.utfpr.pb.pw44s.server.model.User;
+import br.edu.utfpr.pb.pw44s.server.service.UserService;
+import br.edu.utfpr.pb.pw44s.server.shared.GenericResponse;
+import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequestMapping("users")
+public class UserController {
+
+  private final UserService userService;
+  private final ModelMapper modelMapper;
+
+  public UserController(UserService userService, ModelMapper modelMapper) {
+    this.userService = userService;
+    this.modelMapper = modelMapper;
+  }
+
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  public ResponseEntity<GenericResponse> createUser(@RequestBody @Valid UserDTO userDTO) {
+    this.userService.save(modelMapper.map(userDTO, User.class));
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(new GenericResponse("Usuário salvo com sucesso"));
+  }
+
 } 
 ```  
 Após esse ajuste, não será necessário fazer mais nenhuma modificação na aplicação e os testes e as requisições realizadas anteriormente irão funcionar da mesma maneira. Apenas adicionamos uma camada de abstração dos dados que trafegam entre as diferentes camadas da solução que está sendo desenvolvida.
@@ -2690,36 +2690,35 @@ Além do ajuste no arquivo de propriedades devemos nos certificar que o *driver*
 Em alguns momentos será necessário recuperar os dados do usuário autenticado para alguma tarefa na API. Para exemplificar será criada a classe `AuthController` e dentro dela o método `getUserInfo()`. O `username` pode ser recuperado tanto por meio do objeto do tipo `Principal` no *controller* quanto utilizando o `SecurityContextHolder` por meio do código: `SecurityContextHolder.getContext().getAuthentication().getName();`. Com o `username` basta buscar o usuário no banco de dados. Lembrando que a URL ***/auth/user-info*** só poderá ser acessada por usuários autenticados.
 
 ```java
-package br.edu.utfpr.pb.pw44s.server.controller;  
-  
-import br.edu.utfpr.pb.pw44s.server.dto.UserDTO;  
-import br.edu.utfpr.pb.pw44s.server.service.AuthService;  
-import org.modelmapper.ModelMapper;  
-import org.springframework.web.bind.annotation.GetMapping;  
-import org.springframework.web.bind.annotation.RequestMapping;  
-import org.springframework.web.bind.annotation.RestController;  
-  
-import java.security.Principal;  
-  
-@RestController  
-@RequestMapping("auth")  
-public class AuthController {  
-  
-    private final AuthService authService;  
-    private final ModelMapper modelMapper;  
-  
-    public AuthController(AuthService authService, ModelMapper modelMapper) {  
-        this.authService = authService;  
-        this.modelMapper = modelMapper;  
-    }  
-  
-    @GetMapping("user-info")  
-    public UserDTO getUserInfo(Principal principal) {  
-        // String username = SecurityContextHolder.getContext().getAuthentication().getName();  
-        // Ou:
-        String username = principal.getName();  
-        return modelMapper.map(authService.loadUserByUsername(username), UserDTO.class);  
-    }  
+package br.edu.utfpr.pb.pw44s.server.controller;
+
+import br.edu.utfpr.pb.pw44s.server.service.AuthService;
+import org.modelmapper.ModelMapper;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.security.Principal;
+
+@RestController
+@RequestMapping("auth")
+public class AuthController {
+
+  private final AuthService authService;
+  private final ModelMapper modelMapper;
+
+  public AuthController(AuthService authService, ModelMapper modelMapper) {
+    this.authService = authService;
+    this.modelMapper = modelMapper;
+  }
+
+  @GetMapping("user-info")
+  public UserDTO getUserInfo(Principal principal) {
+    // String username = SecurityContextHolder.getContext().getAuthentication().getName();  
+    // Ou:
+    String username = principal.getName();
+    return modelMapper.map(authService.loadUserByUsername(username), UserDTO.class);
+  }
 }
 ```
 

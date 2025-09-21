@@ -1,6 +1,5 @@
 package br.edu.utfpr.pb.pw44s.server.dto;
 
-import br.edu.utfpr.pb.pw44s.server.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -8,10 +7,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class AddressDTO {
+public class UserDTO {
     private Long id;
-    private String logradouro;
-    private String complement;
-    private String cep;
-    private UserDTO user;
+    private String username;
+    private String password;
+    private String displayName;
 }

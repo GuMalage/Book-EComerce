@@ -15,7 +15,6 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.stream.Collectors;
 
-// T = class type, D = dto type, ID = attribute related to primary key type  
 public abstract class CrudController<T, D, ID extends Serializable> {
 
     protected abstract ICrudServiceWrite<T, ID> getWriteService();
@@ -39,12 +38,12 @@ public abstract class CrudController<T, D, ID extends Serializable> {
         return getModelMapper().map(entityDto, this.typeClass);
     }
 
-    @GetMapping //http://ip-api:port/request-mapping  
+    @GetMapping
     public ResponseEntity<List<D>> findAll() {
         return ResponseEntity.ok(getReadService().findAll().stream().map(this::convertToDto).collect(Collectors.toList()));
     }
 
-    @GetMapping("page") //http://ip-api:port/request-mapping/page?page=1&size=5  
+    @GetMapping("page")
     public ResponseEntity<Page<D>> findAll(@RequestParam int page,
                                            @RequestParam int size,
                                            @RequestParam(required = false) String order,

@@ -19,4 +19,6 @@ public interface ICrudServiceRead <T, ID extends Serializable> {
     boolean exists(ID id);
 
     long count();
+
+    T findOne(ID id);
 }

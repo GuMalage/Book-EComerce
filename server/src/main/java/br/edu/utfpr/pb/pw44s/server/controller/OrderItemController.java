@@ -23,16 +23,16 @@ public class OrderItemController extends CrudController <OrderItem, OrderItemDTO
 
     @Override
     protected ICrudServiceWrite<OrderItem, Long> getWriteService() {
-        return null;
+        return this.orderItemServiceWrite;
     }
 
     @Override
     protected ICrudServiceRead<OrderItem, Long> getReadService() {
-        return null;
+        return this.orderItemServiceRead;
     }
 
     @Override
     protected ModelMapper getModelMapper() {
-        return null;
+        return this.modelMapper;
     }
 }

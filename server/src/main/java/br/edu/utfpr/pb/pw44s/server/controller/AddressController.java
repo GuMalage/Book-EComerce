@@ -44,7 +44,7 @@ public class AddressController extends CrudController<Address, AddressDTO, Long>
         return this.modelMapper;
     }
 
-    @GetMapping("address")
+    @GetMapping("my-address")
     public ResponseEntity<List<Address>> findByAuthenticatedUser() {
         List<Address> addresses = addressServiceRead.findByAuthenticatedUser();
         if (addresses == null || addresses.isEmpty()) {

@@ -20,6 +20,7 @@ public class Address {
     private Long id;
 
     @ManyToOne
+    @JoinColumn(name = "user_id")
     private User user;
 
     private String logradouro;

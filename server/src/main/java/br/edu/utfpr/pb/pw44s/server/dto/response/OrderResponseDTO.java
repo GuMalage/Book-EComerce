@@ -1,9 +1,8 @@
-package br.edu.utfpr.pb.pw44s.server.dto;
+package br.edu.utfpr.pb.pw44s.server.dto.response;
 
-import br.edu.utfpr.pb.pw44s.server.model.User;
-import jakarta.persistence.ManyToOne;
+import br.edu.utfpr.pb.pw44s.server.dto.OrderItemDTO;
+import br.edu.utfpr.pb.pw44s.server.dto.UserDTO;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,11 +14,10 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderDTO {
+public class OrderResponseDTO {
     private Long id;
     private LocalDateTime dateOrder;
-    private Long userId;
-    private List<OrderItemDTO> itemsList;
     private UserDTO user;
+    private List<OrderItemResponseDTO> itemsList = new ArrayList<>();
     private BigDecimal totalPrice;
 }

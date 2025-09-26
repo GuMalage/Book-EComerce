@@ -1,6 +1,7 @@
 package br.edu.utfpr.pb.pw44s.server.controller;
 
 import br.edu.utfpr.pb.pw44s.server.dto.AddressDTO;
+import br.edu.utfpr.pb.pw44s.server.dto.response.AddressResponseDTO;
 import br.edu.utfpr.pb.pw44s.server.model.Address;
 import br.edu.utfpr.pb.pw44s.server.service.IAddressServiceRead;
 import br.edu.utfpr.pb.pw44s.server.service.IAddressServiceWrite;
@@ -16,13 +17,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("address")
-public class AddressController extends CrudController<Address, AddressDTO, Long>{
+public class AddressController extends CrudController<Address, AddressDTO, AddressResponseDTO, Long>{
     private final IAddressServiceWrite addressServiceWrite;
     private final IAddressServiceRead addressServiceRead;
     private final ModelMapper modelMapper;
 
     public AddressController(IAddressServiceWrite addressServiceWrite, IAddressServiceRead addressServiceRead, ModelMapper modelMapper) {
-        super(Address.class, AddressDTO.class);
+        super(Address.class, AddressDTO.class, AddressResponseDTO.class);
         this.addressServiceWrite = addressServiceWrite;
         this.addressServiceRead = addressServiceRead;
         this.modelMapper = modelMapper;

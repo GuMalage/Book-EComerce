@@ -18,9 +18,12 @@ public class OrderItem {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "unit_price", nullable = false)
     private BigDecimal unitPrice;
 
     private int quantity;
+
+    private BigDecimal totalPriceItems;
 
     @ManyToOne
     private Order order;

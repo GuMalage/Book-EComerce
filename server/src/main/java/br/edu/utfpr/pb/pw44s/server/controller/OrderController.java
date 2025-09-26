@@ -1,6 +1,8 @@
 package br.edu.utfpr.pb.pw44s.server.controller;
 
 import br.edu.utfpr.pb.pw44s.server.dto.OrderDTO;
+import br.edu.utfpr.pb.pw44s.server.dto.response.OrderItemResponseDTO;
+import br.edu.utfpr.pb.pw44s.server.dto.response.OrderResponseDTO;
 import br.edu.utfpr.pb.pw44s.server.model.Order;
 import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceRead;
 import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
@@ -16,13 +18,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("order")
-public class OrderController extends CrudController<Order, OrderDTO, Long>{
+public class OrderController extends CrudController<Order, OrderDTO, OrderResponseDTO, Long>{
     private final IOrderServiceWrite orderServiceWrite;
     private final IOrderServiceRead orderServiceRead;
     private final ModelMapper modelMapper;
 
     public OrderController(IOrderServiceWrite orderServiceWrite, IOrderServiceRead orderServiceRead, ModelMapper modelMapper) {
-        super(Order.class, OrderDTO.class);
+        super(Order.class, OrderDTO.class, OrderResponseDTO.class);
         this.orderServiceWrite = orderServiceWrite;
         this.orderServiceRead = orderServiceRead;
         this.modelMapper = modelMapper;
@@ -44,16 +46,16 @@ public class OrderController extends CrudController<Order, OrderDTO, Long>{
     }
 
     @Override
-    public ResponseEntity<List<OrderDTO>> findAll() {
+    public ResponseEntity<List<OrderResponseDTO>> findAll() {
         return orderServiceRead.getOrdersByAuthenticatedUser();
     }
 
     @Override
-    public ResponseEntity<OrderDTO> create(OrderDTO entity) {
+    public ResponseEntity<OrderResponseDTO> create(OrderDTO entity) {
         OrderDTO savedOrderDTO = orderServiceWrite.SaveCompleteOrder(entity);
-        OrderDTO responseOrderDTO = modelMapper.map(savedOrderDTO, OrderDTO.class);
+        OrderResponseDTO responseOrderResponseDTO = modelMapper.map(savedOrderDTO, OrderResponseDTO.class);
 
-        return ResponseEntity.ok(responseOrderDTO);
+        return ResponseEntity.ok(responseOrderResponseDTO);
     }
 
 }

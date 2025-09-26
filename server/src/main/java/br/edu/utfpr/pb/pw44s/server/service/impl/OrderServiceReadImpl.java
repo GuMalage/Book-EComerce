@@ -2,6 +2,8 @@ package br.edu.utfpr.pb.pw44s.server.service.impl;
 
 import br.edu.utfpr.pb.pw44s.server.dto.OrderDTO;
 import br.edu.utfpr.pb.pw44s.server.dto.OrderItemDTO;
+import br.edu.utfpr.pb.pw44s.server.dto.response.OrderItemResponseDTO;
+import br.edu.utfpr.pb.pw44s.server.dto.response.OrderResponseDTO;
 import br.edu.utfpr.pb.pw44s.server.model.*;
 import br.edu.utfpr.pb.pw44s.server.repository.OrderItemRepository;
 import br.edu.utfpr.pb.pw44s.server.repository.OrderRepository;
@@ -35,37 +37,33 @@ public class OrderServiceReadImpl extends CrudServiceReadImpl<Order, Long> imple
     }
 
     @Override
-    public ResponseEntity<List<OrderDTO>> getOrdersByAuthenticatedUser() {
+    public ResponseEntity<List<OrderResponseDTO>> getOrdersByAuthenticatedUser() {
         User currentUser = authService.getAuthenticatedUser();
 
-        // Fetch all orders for the authenticated user
         List<Order> userOrders = orderRepository.findByUser(currentUser);
 
-        // Map each Order to ResponseOrderDTO
-        List<OrderDTO> responseOrders = userOrders.stream()
+        List<OrderResponseDTO> responseOrders = userOrders.stream()
                 .map(order -> {
-                    // Convert Order to ResponseOrderDTO
-                    OrderDTO orderDTO = modelMapper.map(order, OrderDTO.class);
+                    OrderResponseDTO orderResponseDTO = modelMapper.map(order, OrderResponseDTO.class);
 
-                    // Fetch associated OrderItems for this order
                     List<OrderItem> orderItems = orderItemRepository.findByOrder_Id(order.getId());
 
-                    // Map OrderItems to ResponseOrderItemDTO and set in the orderDTO
-                    List<OrderItemDTO> orderItemDTOs = orderItems.stream()
+                    List<OrderItemResponseDTO> orderItemDTOs = orderItems.stream()
                             .map(item -> {
 
-                                OrderItemDTO itemDTO = new OrderItemDTO();
+                                OrderItemResponseDTO itemDTO = new OrderItemResponseDTO();
                                 itemDTO.setId(item.getId());
                                 itemDTO.setQuantity(item.getQuantity());
                                 itemDTO.setProductName(item.getProduct().getName());
                                 itemDTO.setProductId(item.getProduct().getId());
                                 itemDTO.setProductPrice(item.getUnitPrice());
+                                itemDTO.setTotalPriceItems(item.getTotalPriceItems());
                                 return itemDTO;
                             })
                             .collect(Collectors.toList());
 
-                    orderDTO.setItemsList(orderItemDTOs);
-                    return orderDTO;
+                    orderResponseDTO.setItemsList(orderItemDTOs);
+                    return orderResponseDTO;
                 })
                 .collect(Collectors.toList());
 

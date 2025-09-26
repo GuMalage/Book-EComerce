@@ -1,6 +1,6 @@
-package br.edu.utfpr.pb.pw44s.server.dto;
+package br.edu.utfpr.pb.pw44s.server.dto.response;
 
-
+import br.edu.utfpr.pb.pw44s.server.dto.OrderDTO;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -10,13 +10,11 @@ import java.math.BigDecimal;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrderItemDTO {
+public class OrderItemResponseDTO {
     private Long id;
     private int quantity;
     private long productId;
     private String productName;
     private BigDecimal productPrice;
     private BigDecimal totalPriceItems;
-    private OrderDTO order;
-    private BigDecimal totalPrice;
 }

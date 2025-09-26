@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface IOrderServiceWrite extends ICrudServiceWrite<Order, Long>{
     OrderDTO SaveCompleteOrder(OrderDTO orderDTO);
+    void UpdateOrder(OrderDTO entity);
 }

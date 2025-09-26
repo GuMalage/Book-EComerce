@@ -1,6 +1,7 @@
 package br.edu.utfpr.pb.pw44s.server.controller;
 
 import br.edu.utfpr.pb.pw44s.server.dto.ProductDTO;
+import br.edu.utfpr.pb.pw44s.server.dto.response.ProductResponseDTO;
 import br.edu.utfpr.pb.pw44s.server.model.Product;
 import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceRead;
 import br.edu.utfpr.pb.pw44s.server.service.ICrudServiceWrite;
@@ -17,13 +18,13 @@ import java.util.List;
 
 @RestController
 @RequestMapping("products")
-public class ProductController extends CrudController<Product, ProductDTO, Long> {
+public class ProductController extends CrudController<Product, ProductDTO, ProductResponseDTO, Long> {
     private final IProductServiceWrite productServiceWrite;
     private final IProductServiceRead productServiceRead;
     private final ModelMapper modelMapper;
 
     public ProductController(IProductServiceWrite productServiceWrite, IProductServiceRead productServiceRead, ModelMapper modelMapper, ProductServiceWriteImpl productServiceWriteImpl) {
-        super(Product.class, ProductDTO.class);
+        super(Product.class, ProductDTO.class, ProductResponseDTO.class);
         this.productServiceWrite = productServiceWrite;
         this.productServiceRead = productServiceRead;
         this.modelMapper = modelMapper;

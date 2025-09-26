@@ -2,6 +2,8 @@ package br.edu.utfpr.pb.pw44s.server.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -18,6 +20,8 @@ public class Order {
     private Long id;
 
     private LocalDateTime dateOrder;
+
+    private BigDecimal totalPrice;
 
     @ManyToOne
     private User user;
